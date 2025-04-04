@@ -90,186 +90,169 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
           children: [
 
         TextFormField(
-              focusNode: _nameFocus,
-              autofocus: true,
-              onFieldSubmitted: (_) {
-                _fieldFocusChange(context, _nameFocus, _phoneFocus);
-              },
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Full Name *',
-                hintText: 'What do people call you?',
-                prefixIcon: const Icon(Icons.person),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    _nameController.clear();
-                  },
-                  child: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.red,
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: BorderSide(color:  Colors.purple[400]!, width: 2.0),
-                ),
-              ),
-              validator: validateName,
-            ),
-            const SizedBox(height: 10),
+  focusNode: _nameFocus,
+  autofocus: true,
+  onFieldSubmitted: (_) {
+    _fieldFocusChange(context, _nameFocus, _phoneFocus);
+  },
+  controller: _nameController,
+  decoration: InputDecoration(
+    labelText: 'Full Name *',
+    hintText: 'What do people call you?',
+    prefixIcon: const Icon(Icons.person),
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.clear, color: Colors.red),
+      onPressed: () => _nameController.clear(),
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  validator: validateName,
+),
+const SizedBox(height: 10),
 
-        TextFormField(
-            controller: _dobController,
-             decoration: InputDecoration(
-               border: OutlineInputBorder(),
-               icon: Icon(Icons.calendar_today),
-               labelText: 'Date of Birth',
-               hintText: 'DD/MM/YYYY',
-               suffixIcon: GestureDetector(
-                  onLongPress: () {
-                    _phoneController.clear();
-                  },
-                  child: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.red,
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: BorderSide(color: Colors.purple[400]!, width: 2.0),
-                ), 
-             ),
-            onTap: () async {
-             FocusScope.of(context).requestFocus(FocusNode()); 
-             DateTime? pickedDate = await showDatePicker(
-                 context: context,
-                 initialDate: DateTime(2000),
-                 firstDate: DateTime(1900),
-                 lastDate: DateTime.now(),
-             );
-         if (pickedDate != null) {
-          _dobController.text = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-         }
+TextFormField(
+  controller: _dobController,
+  decoration: InputDecoration(
+    labelText: 'Date of Birth *',
+    hintText: 'DD/MM/YYYY',
+    prefixIcon: const Icon(Icons.calendar_today),
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.clear, color: Colors.red),
+      onPressed: () => _dobController.clear(),
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  onTap: () async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null) {
+      _dobController.text = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+    }
+  },
+),
+const SizedBox(height: 10),
+
+TextFormField(
+  focusNode: _phoneFocus,
+  onFieldSubmitted: (_) {
+    _fieldFocusChange(context, _phoneFocus, _passFocus);
+  },
+  controller: _phoneController,
+  decoration: InputDecoration(
+    labelText: 'Phone Number *',
+    hintText: '(XXX)XXX-XXXX',
+    prefixIcon: const Icon(Icons.call),
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.clear, color: Colors.red),
+      onPressed: () => _phoneController.clear(),
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  keyboardType: TextInputType.phone,
+  inputFormatters: [
+    FilteringTextInputFormatter.allow(RegExp(r'^[()\d -]{1,15}$')),
+  ],
+  validator: (value) => validatePhoneNumber(value!)
+      ? null
+      : 'Phone number must be (###)###-####',
+),
+const SizedBox(height: 10),
+
+TextFormField(
+  controller: _emailController,
+  decoration: InputDecoration(
+    labelText: 'Email Address *',
+    hintText: 'Enter your email',
+    prefixIcon: const Icon(Icons.mail),
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.clear, color: Colors.red),
+      onPressed: () => _emailController.clear(),
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  keyboardType: TextInputType.emailAddress,
+),
+const SizedBox(height: 10),
+
+DropdownButtonFormField(
+  decoration: InputDecoration(
+    labelText: 'Country *',
+    prefixIcon: const Icon(Icons.map),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  items: _countries.map((country) {
+    return DropdownMenuItem(
+      value: country,
+      child: Text(country),
+    );
+  }).toList(),
+  onChanged: (country) {
+    setState(() {
+      _selectedCountry = country as String;
+    });
+  },
+  value: _selectedCountry,
+),
+const SizedBox(height: 20),
+
+TextFormField(
+  focusNode: _passFocus,
+  controller: _passController,
+  obscureText: _hidePass,
+  decoration: InputDecoration(
+    labelText: 'Password *',
+    hintText: 'Enter your password',
+    prefixIcon: const Icon(Icons.security),
+    suffixIcon: IconButton(
+      icon: Icon(_hidePass ? Icons.visibility : Icons.visibility_off),
+      onPressed: () {
+        setState(() {
+          _hidePass = !_hidePass;
+        });
       },
     ),
-     const SizedBox(height: 10),
-            
-        TextFormField(
-          focusNode: _phoneFocus,
-           onFieldSubmitted: (_) {
-           _fieldFocusChange(context, _phoneFocus, _passFocus);
-            }, 
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: 'Phone Number *',
-                hintText: 'Where can we reach you?',
-                helperText: 'Phone format: (XXX)XXX-XXXX',
-                prefixIcon: const Icon(Icons.call),
-                suffixIcon: GestureDetector(
-                  onLongPress: () {
-                    _phoneController.clear();
-                  },
-                  child: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.red,
-                  ),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                  borderSide: BorderSide(color: Colors.purple[400]!, width: 2.0),
-                ),
-              ),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                // FilteringTextInputFormatter.digitsOnly,
-                FilteringTextInputFormatter(RegExp(r'^[()\d -]{1,15}$'),
-                    allow: true),
-              ],
-              validator: (value) => validatePhoneNumber(value!)
-                  ? null
-                  : 'Phone number must be entered as (###)###-####',
-            ),
-            const SizedBox(height: 10),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  validator: _validatePassword,
+),
+const SizedBox(height: 10),
 
-         TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email Address',
-                hintText: 'Enater a email address',
-                icon: Icon(Icons.mail),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              // validator: _validateEmail,
-            ),
-            const SizedBox(height: 10),
-        DropdownButtonFormField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  icon: Icon(Icons.map),
-                  labelText: 'Country?'),
-              items: _countries.map((country) {
-                return DropdownMenuItem(
-                  value: country,
-                  child: Text(country),
-                );
-              }).toList(),
-              onChanged: (country) {
-                setState(() {
-                  _selectedCountry = country as String;
-                });
-              },
-              value: _selectedCountry,
-            ),
-            const SizedBox(height: 20),
+TextFormField(
+  controller: _confirmPassController,
+  obscureText: _hidePass,
+  decoration: InputDecoration(
+    labelText: 'Confirm Password *',
+    hintText: 'Confirm your password',
+    prefixIcon: const Icon(Icons.lock),
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.clear, color: Colors.red),
+      onPressed: () => _confirmPassController.clear(),
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20.0),
+    ),
+  ),
+  validator: _validatePassword,
+),
+const SizedBox(height: 15),
 
-        TextFormField(
-              focusNode: _passFocus,
-              controller: _passController,
-              obscureText: _hidePass,
-              maxLength: 8,
-              decoration: InputDecoration(
-                labelText: 'Password *',
-                hintText: 'Enter the password',
-                suffixIcon: IconButton(
-                  icon:
-                      Icon(_hidePass ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () {
-                    setState(() {
-                      _hidePass = !_hidePass;
-                    });
-                  },
-                ),
-                icon: const Icon(Icons.security),
-              ),
-              validator: _validatePassword,
-            ),
-            const SizedBox(height: 10),
-            
-        TextFormField(
-              controller: _confirmPassController,
-              obscureText: _hidePass,
-              maxLength: 8,
-              decoration: const InputDecoration(
-                labelText: 'Confirm Password *',
-                hintText: 'Confirm the password',
-                icon: Icon(Icons.border_color),
-              ),
-              validator: _validatePassword,
-            ),
-           
-            const SizedBox(height: 15),
               ElevatedButton(
   onPressed: _submitForm,
   style: ElevatedButton.styleFrom(
